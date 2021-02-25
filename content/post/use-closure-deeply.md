@@ -1,10 +1,9 @@
 ---
 date: 2019-11-06
-updated: 2019-11-06
 categories : [前端]
 tags : [JavaScript]
 title: 闭包在 curry/compose/memo 中的使用
-draft: true
+draft: false
 ---
 
 什么是闭包？
@@ -14,7 +13,6 @@ draft: true
 **简单来说：闭包就是携带状态的函数，并且它的状态可以完全对外隐藏起来。**
 
 <!--more-->
-
 
 ## curry
 

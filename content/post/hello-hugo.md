@@ -1,10 +1,12 @@
 ---
 title: "Hugo 建站记录"
 date: 2021-02-24
+lastmod: 2021-02-25
 draft: false
 tags: [Hugo]
 categories: []
 author: "Farmer"
+draft: true
 ---
 
 **生命在于折腾，之前使用过 Jekyll、Hexo 静态建站，但效果都不尽如人意，现在尝试使用 Hugo，开启一段新的旅程。**
@@ -110,7 +112,8 @@ jobs:
 
 ## 集成评论
 
-选择 utterances
+选择 utterances，参考[Hugo 博客使用 utterances 作为评论系统](https://www.midfang.com/hugo-utterances-comment-system/)
+
 
 # 参考
 
