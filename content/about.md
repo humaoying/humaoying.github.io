@@ -1,20 +1,13 @@
 ---
 title: "About"
-date: 2017-08-20T21:38:52+08:00
-lastmod: 2017-08-28T21:41:52+08:00
+date: 2021-02-25
+lastmod: 2021-02-25
 menu: "main"
 weight: 50
-
 ---
 
-Hugo is a static site engine written in Go.
 
 
-It makes use of a variety of open source projects including:
+> 子曰：“学而不思则罔，思而不学则殆。”
 
-* [Cobra](https://github.com/spf13/cobra)
-* [Viper](https://github.com/spf13/viper)
-* [J Walter Weatherman](https://github.com/spf13/jWalterWeatherman)
-* [Cast](https://github.com/spf13/cast)
-
-Learn more and contribute on [GitHub](https://github.com/gohugoio).
+**记录一个长期主义者的自我修养之路。**
