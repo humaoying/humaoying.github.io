@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>前端 on Farmer</title><link>https://humaoying.github.io/categories/%E5%89%8D%E7%AB%AF/</link><description>Recent content in 前端 on Farmer</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 06 Nov 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://humaoying.github.io/categories/%E5%89%8D%E7%AB%AF/index.xml" rel="self" type="application/rss+xml"/><item><title>闭包在 curry/compose/memo 中的使用</title><link>https://humaoying.github.io/post/use-closure-deeply/</link><pubDate>Wed, 06 Nov 2019 00:00:00 +0000</pubDate><guid>https://humaoying.github.io/post/use-closure-deeply/</guid><description>&lt;p>什么是闭包？&lt;/p>
+&lt;blockquote>
+&lt;p>Douglas Crockford 在 《JavaScript：The Good Parts》中说：一个内部函数除了可以访问自己的参数和变量，同时它也能自由访问把它嵌套在其中的父函数的参数和变量。&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;strong>简单来说：闭包就是携带状态的函数，并且它的状态可以完全对外隐藏起来。&lt;/strong>&lt;/p></description></item><item><title>使用 Memoization 优化代码性能</title><link>https://humaoying.github.io/post/use-memoization-optimization/</link><pubDate>Mon, 17 Sep 2018 00:00:00 +0000</pubDate><guid>https://humaoying.github.io/post/use-memoization-optimization/</guid><description>&lt;p>&lt;strong>memoization 来源于拉丁语 memorandum (&amp;ldquo;to be remembered&amp;rdquo;)，不要与 memorization 混淆了。&lt;/strong>&lt;/p>
+&lt;p>首先来看一下维基百科的描述：&lt;/p>
+&lt;blockquote>
+&lt;p>In computing, memoization or memoisation is an optimization technique used primarily to speed up computer programs by storing the results of expensive function calls and returning the cached result when the same inputs occur again.&lt;/p>
+&lt;/blockquote></description></item></channel></rss>
