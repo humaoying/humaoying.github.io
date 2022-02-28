@@ -1,19 +1,106 @@
-<!doctype html><html lang=en><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>闭包在 curry/compose/memo 中的使用 - Farmer</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=author content="Farmer"><meta name=description content="什么是闭包？
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<title>闭包在 curry/compose/memo 中的使用 - F.I.R.E</title><meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=author content="F.I.R.E"><meta name=description content="什么是闭包？
  Douglas Crockford 在 《JavaScript：The Good Parts》中说：一个内部函数除了可以访问自己的参数和变量，同时它也能自由访问把它嵌套在其中的父函数的参数和变量。
  简单来说：闭包就是携带状态的函数，并且它的状态可以完全对外隐藏起来。
-"><meta name=keywords content="blog,farmer"><meta name=generator content="Hugo 0.81.0 with theme even"><link rel=canonical href=https://humaoying.github.io/post/use-closure-deeply/><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous><meta property="og:title" content="闭包在 curry/compose/memo 中的使用"><meta property="og:description" content="什么是闭包？
+"><meta name=keywords content="blog,F.I.R.E">
+<meta name=generator content="Hugo 0.93.0 with theme even">
+<link rel=canonical href=https://humaoying.github.io/post/use-closure-deeply/>
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=manifest href=/manifest.json>
+<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
+<link href=/sass/main.min.f92fd13721ddf72129410fd8250e73152cc6f2438082b6c0208dc24ee7c13fc4.css rel=stylesheet>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
+<meta property="og:title" content="闭包在 curry/compose/memo 中的使用">
+<meta property="og:description" content="什么是闭包？
 
 Douglas Crockford 在 《JavaScript：The Good Parts》中说：一个内部函数除了可以访问自己的参数和变量，同时它也能自由访问把它嵌套在其中的父函数的参数和变量。
 
-简单来说：闭包就是携带状态的函数，并且它的状态可以完全对外隐藏起来。"><meta property="og:type" content="article"><meta property="og:url" content="https://humaoying.github.io/post/use-closure-deeply/"><meta property="article:section" content="post"><meta property="article:published_time" content="2019-11-06T00:00:00+00:00"><meta property="article:modified_time" content="2019-11-06T00:00:00+00:00"><meta itemprop=name content="闭包在 curry/compose/memo 中的使用"><meta itemprop=description content="什么是闭包？
+简单来说：闭包就是携带状态的函数，并且它的状态可以完全对外隐藏起来。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://humaoying.github.io/post/use-closure-deeply/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2019-11-06T00:00:00+00:00">
+<meta property="article:modified_time" content="2019-11-06T00:00:00+00:00">
+<meta itemprop=name content="闭包在 curry/compose/memo 中的使用">
+<meta itemprop=description content="什么是闭包？
 
 Douglas Crockford 在 《JavaScript：The Good Parts》中说：一个内部函数除了可以访问自己的参数和变量，同时它也能自由访问把它嵌套在其中的父函数的参数和变量。
 
-简单来说：闭包就是携带状态的函数，并且它的状态可以完全对外隐藏起来。"><meta itemprop=datePublished content="2019-11-06T00:00:00+00:00"><meta itemprop=dateModified content="2019-11-06T00:00:00+00:00"><meta itemprop=wordCount content="449"><meta itemprop=keywords content="JavaScript,"><meta name=twitter:card content="summary"><meta name=twitter:title content="闭包在 curry/compose/memo 中的使用"><meta name=twitter:description content="什么是闭包？
+简单来说：闭包就是携带状态的函数，并且它的状态可以完全对外隐藏起来。"><meta itemprop=datePublished content="2019-11-06T00:00:00+00:00">
+<meta itemprop=dateModified content="2019-11-06T00:00:00+00:00">
+<meta itemprop=wordCount content="448">
+<meta itemprop=keywords content="JavaScript,"><meta name=twitter:card content="summary">
+<meta name=twitter:title content="闭包在 curry/compose/memo 中的使用">
+<meta name=twitter:description content="什么是闭包？
 
 Douglas Crockford 在 《JavaScript：The Good Parts》中说：一个内部函数除了可以访问自己的参数和变量，同时它也能自由访问把它嵌套在其中的父函数的参数和变量。
 
-简单来说：闭包就是携带状态的函数，并且它的状态可以完全对外隐藏起来。"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>Farmer</a></div><div class=mobile-navbar-icon><span></span><span></span><span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><a href=/><li class=mobile-menu-item>Home</li></a><a href=/post/><li class=mobile-menu-item>Archives</li></a><a href=/tags/><li class=mobile-menu-item>Tags</li></a><a href=/categories/><li class=mobile-menu-item>Categories</li></a><a href=/about/><li class=mobile-menu-item>About</li></a></ul></nav><div class=container id=mobile-panel><header id=header class=header><div class=logo-wrapper><a href=/ class=logo>Farmer</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=/>Home</a></li><li class=menu-item><a class=menu-item-link href=/post/>Archives</a></li><li class=menu-item><a class=menu-item-link href=/tags/>Tags</a></li><li class=menu-item><a class=menu-item-link href=/categories/>Categories</a></li><li class=menu-item><a class=menu-item-link href=/about/>About</a></li></ul></nav></header><main id=main class=main><div class=content-wrapper><div id=content class=content><article class=post><header class=post-header><h1 class=post-title>闭包在 curry/compose/memo 中的使用</h1><div class=post-meta><span class=post-time>2019-11-06</span><div class=post-category><a href=/categories/%E5%89%8D%E7%AB%AF/>前端</a></div></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>Contents</h2><div class="post-toc-content always-active"><nav id=TableOfContents><ul><li><ul><li><a href=#curry>curry</a></li><li><a href=#compose>compose</a></li><li><a href=#memo>memo</a></li></ul></li></ul></nav></div></div><div class=post-content><p>什么是闭包？</p><blockquote><p>Douglas Crockford 在 《JavaScript：The Good Parts》中说：一个内部函数除了可以访问自己的参数和变量，同时它也能自由访问把它嵌套在其中的父函数的参数和变量。</p></blockquote><p><strong>简单来说：闭包就是携带状态的函数，并且它的状态可以完全对外隐藏起来。</strong></p><h2 id=curry>curry</h2><p><strong>curry: 只传递给函数一部分参数来调用它，让它返回一个函数去处理剩下的参数</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+简单来说：闭包就是携带状态的函数，并且它的状态可以完全对外隐藏起来。"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head><body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>F.I.R.E</a>
+</div><div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div></div><nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<a href=/>
+<li class=mobile-menu-item>Home</li></a><a href=/post/>
+<li class=mobile-menu-item>Archives</li></a><a href=/tags/>
+<li class=mobile-menu-item>Tags</li></a><a href=/categories/>
+<li class=mobile-menu-item>Categories</li></a><a href=/about/>
+<li class=mobile-menu-item>About</li></a>
+</ul></nav><div class=container id=mobile-panel>
+<header id=header class=header>
+<div class=logo-wrapper>
+<a href=/ class=logo>F.I.R.E</a>
+</div><nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=/>Home</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/post/>Archives</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/tags/>Tags</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/categories/>Categories</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/about/>About</a>
+</li></ul></nav></header><main id=main class=main>
+<div class=content-wrapper>
+<div id=content class=content>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title>闭包在 curry/compose/memo 中的使用</h1><div class=post-meta>
+<span class=post-time> 2019-11-06 </span>
+<div class=post-category>
+<a href=/categories/%E5%89%8D%E7%AB%AF/> 前端 </a>
+</div></div></header><div class=post-toc id=post-toc>
+<h2 class=post-toc-title>Contents</h2><div class="post-toc-content always-active">
+<nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#curry>curry</a></li><li><a href=#compose>compose</a></li><li><a href=#memo>memo</a></li></ul></li></ul></nav></div></div><div class=post-content>
+<p>什么是闭包？</p><blockquote>
+<p>Douglas Crockford 在 《JavaScript：The Good Parts》中说：一个内部函数除了可以访问自己的参数和变量，同时它也能自由访问把它嵌套在其中的父函数的参数和变量。</p></blockquote><p><strong>简单来说：闭包就是携带状态的函数，并且它的状态可以完全对外隐藏起来。</strong></p><h2 id=curry>curry</h2><p><strong>curry: 只传递给函数一部分参数来调用它，让它返回一个函数去处理剩下的参数</strong></p><div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -37,31 +124,34 @@ Douglas Crockford 在 《JavaScript：The Good Parts》中说：一个内部函�
 </span><span class=lnt>22
 </span><span class=lnt>23
 </span><span class=lnt>24
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nx>curry</span><span class=p>(</span><span class=nx>func</span><span class=p>)</span> <span class=p>{</span>
-    <span class=kr>const</span> <span class=nx>len</span> <span class=o>=</span> <span class=nx>func</span><span class=p>.</span><span class=nx>length</span>
-    <span class=kd>function</span> <span class=nx>judgeCurry</span><span class=p>()</span> <span class=p>{</span>
-        <span class=kr>const</span> <span class=nx>arg</span> <span class=o>=</span> <span class=nx>arguments</span>
-        <span class=k>if</span> <span class=p>(</span><span class=nx>arguments</span><span class=p>.</span><span class=nx>length</span> <span class=o>&gt;=</span> <span class=nx>len</span><span class=p>)</span> <span class=p>{</span>
-            <span class=k>return</span> <span class=nx>func</span><span class=p>.</span><span class=nx>apply</span><span class=p>(</span><span class=kc>null</span><span class=p>,</span> <span class=nx>arg</span><span class=p>)</span>
-        <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
-            <span class=k>return</span> <span class=kd>function</span><span class=p>()</span> <span class=p>{</span>
-                <span class=k>return</span> <span class=nx>judgeCurry</span><span class=p>.</span><span class=nx>call</span><span class=p>(</span><span class=kc>null</span><span class=p>,</span> <span class=p>...</span><span class=nx>arg</span><span class=p>,</span> <span class=p>...</span><span class=nx>arguments</span><span class=p>)</span>
-            <span class=p>}</span>
-        <span class=p>}</span>
-    <span class=p>}</span>
-    <span class=k>return</span> <span class=nx>judgeCurry</span>
-<span class=p>}</span>
-
-<span class=c1>// 测试
-</span><span class=c1></span>
-<span class=kr>const</span> <span class=nx>add</span> <span class=o>=</span> <span class=p>(</span><span class=nx>a</span><span class=p>,</span> <span class=nx>b</span><span class=p>,</span> <span class=nx>c</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=nx>a</span> <span class=o>+</span> <span class=nx>b</span> <span class=o>+</span> <span class=nx>c</span>
-
-<span class=kr>const</span> <span class=nx>curryAdd</span> <span class=o>=</span> <span class=nx>curry</span><span class=p>(</span><span class=nx>add</span><span class=p>)</span>
-
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>curryAdd</span><span class=p>(</span><span class=mi>1</span><span class=p>)(</span><span class=mi>2</span><span class=p>)(</span><span class=mi>3</span><span class=p>))</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>curryAdd</span><span class=p>(</span><span class=mi>1</span><span class=p>)(</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>))</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>curryAdd</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>))</span>
-</code></pre></td></tr></table></div></div><h2 id=compose>compose</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kd>function</span> <span class=nx>curry</span><span class=p>(</span><span class=nx>func</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kr>const</span> <span class=nx>len</span> <span class=o>=</span> <span class=nx>func</span><span class=p>.</span><span class=nx>length</span>
+</span></span><span class=line><span class=cl>    <span class=kd>function</span> <span class=nx>judgeCurry</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kr>const</span> <span class=nx>arg</span> <span class=o>=</span> <span class=nx>arguments</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=nx>arguments</span><span class=p>.</span><span class=nx>length</span> <span class=o>&gt;=</span> <span class=nx>len</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=nx>func</span><span class=p>.</span><span class=nx>apply</span><span class=p>(</span><span class=kc>null</span><span class=p>,</span> <span class=nx>arg</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=kd>function</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=nx>judgeCurry</span><span class=p>.</span><span class=nx>call</span><span class=p>(</span><span class=kc>null</span><span class=p>,</span> <span class=p>...</span><span class=nx>arg</span><span class=p>,</span> <span class=p>...</span><span class=nx>arguments</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>judgeCurry</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 测试
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>add</span> <span class=o>=</span> <span class=p>(</span><span class=nx>a</span><span class=p>,</span> <span class=nx>b</span><span class=p>,</span> <span class=nx>c</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=nx>a</span> <span class=o>+</span> <span class=nx>b</span> <span class=o>+</span> <span class=nx>c</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>curryAdd</span> <span class=o>=</span> <span class=nx>curry</span><span class=p>(</span><span class=nx>add</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>curryAdd</span><span class=p>(</span><span class=mi>1</span><span class=p>)(</span><span class=mi>2</span><span class=p>)(</span><span class=mi>3</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>curryAdd</span><span class=p>(</span><span class=mi>1</span><span class=p>)(</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>curryAdd</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>))</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=compose>compose</h2><div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -82,30 +172,31 @@ Douglas Crockford 在 《JavaScript：The Good Parts》中说：一个内部函�
 </span><span class=lnt>19
 </span><span class=lnt>20
 </span><span class=lnt>21
-</span><span class=lnt>22
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kr>const</span> <span class=nx>compose</span> <span class=o>=</span> <span class=kd>function</span><span class=p>()</span> <span class=p>{</span>
-    <span class=kr>const</span> <span class=nx>len</span> <span class=o>=</span> <span class=nx>arguments</span><span class=p>.</span><span class=nx>length</span>
-    <span class=kr>const</span> <span class=nx>args</span> <span class=o>=</span> <span class=p>[].</span><span class=nx>slice</span><span class=p>.</span><span class=nx>call</span><span class=p>(</span><span class=nx>arguments</span><span class=p>)</span>
-    <span class=k>return</span> <span class=kd>function</span><span class=p>()</span> <span class=p>{</span>
-        <span class=kr>const</span> <span class=nx>initValue</span> <span class=o>=</span> <span class=nx>args</span><span class=p>[</span><span class=nx>len</span> <span class=o>-</span> <span class=mi>1</span><span class=p>].</span><span class=nx>apply</span><span class=p>(</span><span class=kc>null</span><span class=p>,</span> <span class=nx>arguments</span><span class=p>)</span>
-        <span class=kr>const</span> <span class=nx>remainFunctions</span> <span class=o>=</span> <span class=nx>args</span><span class=p>.</span><span class=nx>slice</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=nx>len</span> <span class=o>-</span> <span class=mi>1</span><span class=p>).</span><span class=nx>reverse</span><span class=p>()</span>
-        <span class=k>return</span> <span class=nx>remainFunctions</span><span class=p>.</span><span class=nx>reduce</span><span class=p>(</span><span class=kd>function</span><span class=p>(</span><span class=nx>previousValue</span><span class=p>,</span> <span class=nx>currentValue</span><span class=p>)</span> <span class=p>{</span>
-            <span class=k>return</span> <span class=nx>currentValue</span><span class=p>(</span><span class=nx>previousValue</span><span class=p>)</span>
-        <span class=p>},</span> <span class=nx>initValue</span><span class=p>)</span>
-    <span class=p>}</span>
-<span class=p>}</span>
-
-
-<span class=c1>// 测试
-</span><span class=c1></span>
-<span class=kr>const</span> <span class=nx>display</span> <span class=o>=</span> <span class=nx>x</span> <span class=p>=&gt;</span> <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>x</span><span class=p>)</span>
-<span class=kr>const</span> <span class=nx>toUpperCase</span> <span class=o>=</span> <span class=nx>x</span> <span class=p>=&gt;</span> <span class=nx>x</span><span class=p>.</span><span class=nx>toUpperCase</span><span class=p>()</span>
-<span class=kr>const</span> <span class=nx>addPrefix</span> <span class=o>=</span> <span class=nx>x</span> <span class=p>=&gt;</span> <span class=sb>`prefix_</span><span class=si>${</span><span class=nx>x</span><span class=si>}</span><span class=sb>`</span>
-<span class=kr>const</span> <span class=nx>addSuffix</span> <span class=o>=</span> <span class=nx>x</span> <span class=p>=&gt;</span> <span class=sb>`</span><span class=si>${</span><span class=nx>x</span><span class=si>}</span><span class=sb>_suffix`</span>
-<span class=kr>const</span> <span class=nx>fixWord</span> <span class=o>=</span> <span class=nx>compose</span><span class=p>(</span><span class=nx>display</span><span class=p>,</span> <span class=nx>addPrefix</span><span class=p>,</span> <span class=nx>addSuffix</span><span class=p>,</span> <span class=nx>toUpperCase</span><span class=p>)</span>
-<span class=nx>fixWord</span><span class=p>(</span><span class=s1>&#39;hello world&#39;</span><span class=p>)</span>
-
-</code></pre></td></tr></table></div></div><h2 id=memo>memo</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kr>const</span> <span class=nx>compose</span> <span class=o>=</span> <span class=kd>function</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kr>const</span> <span class=nx>len</span> <span class=o>=</span> <span class=nx>arguments</span><span class=p>.</span><span class=nx>length</span>
+</span></span><span class=line><span class=cl>    <span class=kr>const</span> <span class=nx>args</span> <span class=o>=</span> <span class=p>[].</span><span class=nx>slice</span><span class=p>.</span><span class=nx>call</span><span class=p>(</span><span class=nx>arguments</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=kd>function</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kr>const</span> <span class=nx>initValue</span> <span class=o>=</span> <span class=nx>args</span><span class=p>[</span><span class=nx>len</span> <span class=o>-</span> <span class=mi>1</span><span class=p>].</span><span class=nx>apply</span><span class=p>(</span><span class=kc>null</span><span class=p>,</span> <span class=nx>arguments</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=kr>const</span> <span class=nx>remainFunctions</span> <span class=o>=</span> <span class=nx>args</span><span class=p>.</span><span class=nx>slice</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=nx>len</span> <span class=o>-</span> <span class=mi>1</span><span class=p>).</span><span class=nx>reverse</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=nx>remainFunctions</span><span class=p>.</span><span class=nx>reduce</span><span class=p>(</span><span class=kd>function</span><span class=p>(</span><span class=nx>previousValue</span><span class=p>,</span> <span class=nx>currentValue</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=nx>currentValue</span><span class=p>(</span><span class=nx>previousValue</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span> <span class=nx>initValue</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 测试
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>display</span> <span class=o>=</span> <span class=nx>x</span> <span class=p>=&gt;</span> <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>x</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>toUpperCase</span> <span class=o>=</span> <span class=nx>x</span> <span class=p>=&gt;</span> <span class=nx>x</span><span class=p>.</span><span class=nx>toUpperCase</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>addPrefix</span> <span class=o>=</span> <span class=nx>x</span> <span class=p>=&gt;</span> <span class=sb>`prefix_</span><span class=si>${</span><span class=nx>x</span><span class=si>}</span><span class=sb>`</span>
+</span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>addSuffix</span> <span class=o>=</span> <span class=nx>x</span> <span class=p>=&gt;</span> <span class=sb>`</span><span class=si>${</span><span class=nx>x</span><span class=si>}</span><span class=sb>_suffix`</span>
+</span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>fixWord</span> <span class=o>=</span> <span class=nx>compose</span><span class=p>(</span><span class=nx>display</span><span class=p>,</span> <span class=nx>addPrefix</span><span class=p>,</span> <span class=nx>addSuffix</span><span class=p>,</span> <span class=nx>toUpperCase</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nx>fixWord</span><span class=p>(</span><span class=s1>&#39;hello world&#39;</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=memo>memo</h2><div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -133,41 +224,72 @@ Douglas Crockford 在 《JavaScript：The Good Parts》中说：一个内部函�
 </span><span class=lnt>26
 </span><span class=lnt>27
 </span><span class=lnt>28
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-js data-lang=js><span class=kd>function</span> <span class=nx>memo</span><span class=p>(</span><span class=nx>func</span><span class=p>)</span> <span class=p>{</span>
-    <span class=kr>const</span> <span class=nx>memoize</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>key</span><span class=p>)</span> <span class=p>{</span>
-        <span class=kr>const</span> <span class=nx>cache</span> <span class=o>=</span> <span class=nx>memoize</span><span class=p>.</span><span class=nx>cache</span>
-        <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>cache</span><span class=p>.</span><span class=nx>hasOwnProperty</span><span class=p>(</span><span class=nx>key</span><span class=p>))</span>
-        <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=nx>cache</span><span class=p>.</span><span class=nx>hasOwnProperty</span><span class=p>(</span><span class=nx>key</span><span class=p>))</span> <span class=p>{</span>
-            <span class=nx>cache</span><span class=p>[</span><span class=nx>key</span><span class=p>]</span> <span class=o>=</span> <span class=nx>func</span><span class=p>.</span><span class=nx>apply</span><span class=p>(</span><span class=kc>null</span><span class=p>,</span> <span class=nx>arguments</span><span class=p>)</span>
-        <span class=p>}</span>
-        <span class=k>return</span> <span class=nx>cache</span><span class=p>[</span><span class=nx>key</span><span class=p>]</span>
-    <span class=p>}</span>
-    <span class=c1>// 绑定到闭包函数上，不会造成内存泄露
-</span><span class=c1></span>    <span class=nx>memoize</span><span class=p>.</span><span class=nx>cache</span> <span class=o>=</span> <span class=p>{}</span>
-    <span class=k>return</span> <span class=nx>memoize</span>
-<span class=p>}</span>
-
-<span class=c1>// 测试
-</span><span class=c1></span>
-<span class=kr>const</span> <span class=nx>fibonacci</span> <span class=o>=</span> <span class=nx>n</span> <span class=p>=&gt;</span> <span class=p>{</span>
-    <span class=k>if</span> <span class=p>(</span><span class=nx>n</span> <span class=o>===</span> <span class=mi>1</span> <span class=o>||</span> <span class=nx>n</span> <span class=o>===</span> <span class=mi>2</span><span class=p>)</span> <span class=p>{</span>
-        <span class=k>return</span> <span class=mi>1</span>
-    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
-        <span class=k>return</span> <span class=nx>fibonacci</span><span class=p>(</span><span class=nx>n</span> <span class=o>-</span> <span class=mi>1</span><span class=p>)</span> <span class=o>+</span> <span class=nx>fibonacci</span><span class=p>(</span><span class=nx>n</span> <span class=o>-</span> <span class=mi>2</span><span class=p>)</span>
-    <span class=p>}</span>
-<span class=p>}</span>
-
-<span class=kr>const</span> <span class=nx>memoFibonacci</span> <span class=o>=</span> <span class=nx>memo</span><span class=p>(</span><span class=nx>fibonacci</span><span class=p>)</span>
-
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>memoFibonacci</span><span class=p>(</span><span class=mi>10</span><span class=p>))</span>
-<span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>memoFibonacci</span><span class=p>(</span><span class=mi>10</span><span class=p>))</span>
-</code></pre></td></tr></table></div></div></div><footer class=post-footer><div class=post-tags><a href=/tags/javascript/>JavaScript</a></div><nav class=post-nav><a class=prev href=/post/immutability-in-javascript/><i class="iconfont icon-left"></i><span class="prev-text nav-default">Immutability in JavaScript</span>
-<span class="prev-text nav-mobile">Prev</span></a>
-<a class=next href=/post/use-memoization-optimization/><span class="next-text nav-default">使用 Memoization 优化代码性能</span>
+</span></code></pre></td><td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kd>function</span> <span class=nx>memo</span><span class=p>(</span><span class=nx>func</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kr>const</span> <span class=nx>memoize</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>key</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kr>const</span> <span class=nx>cache</span> <span class=o>=</span> <span class=nx>memoize</span><span class=p>.</span><span class=nx>cache</span>
+</span></span><span class=line><span class=cl>        <span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>cache</span><span class=p>.</span><span class=nx>hasOwnProperty</span><span class=p>(</span><span class=nx>key</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=nx>cache</span><span class=p>.</span><span class=nx>hasOwnProperty</span><span class=p>(</span><span class=nx>key</span><span class=p>))</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>cache</span><span class=p>[</span><span class=nx>key</span><span class=p>]</span> <span class=o>=</span> <span class=nx>func</span><span class=p>.</span><span class=nx>apply</span><span class=p>(</span><span class=kc>null</span><span class=p>,</span> <span class=nx>arguments</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=nx>cache</span><span class=p>[</span><span class=nx>key</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 绑定到闭包函数上，不会造成内存泄露
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>memoize</span><span class=p>.</span><span class=nx>cache</span> <span class=o>=</span> <span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>memoize</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 测试
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>fibonacci</span> <span class=o>=</span> <span class=nx>n</span> <span class=p>=&gt;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=nx>n</span> <span class=o>===</span> <span class=mi>1</span> <span class=o>||</span> <span class=nx>n</span> <span class=o>===</span> <span class=mi>2</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=nx>fibonacci</span><span class=p>(</span><span class=nx>n</span> <span class=o>-</span> <span class=mi>1</span><span class=p>)</span> <span class=o>+</span> <span class=nx>fibonacci</span><span class=p>(</span><span class=nx>n</span> <span class=o>-</span> <span class=mi>2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>memoFibonacci</span> <span class=o>=</span> <span class=nx>memo</span><span class=p>(</span><span class=nx>fibonacci</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>memoFibonacci</span><span class=p>(</span><span class=mi>10</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nx>memoFibonacci</span><span class=p>(</span><span class=mi>10</span><span class=p>))</span>
+</span></span></code></pre></td></tr></table></div></div></div><footer class=post-footer>
+<div class=post-tags>
+<a href=/tags/javascript/>JavaScript</a>
+</div><nav class=post-nav>
+<a class=prev href=/post/immutability-in-javascript/>
+<i class="iconfont icon-left"></i>
+<span class="prev-text nav-default">Immutability in JavaScript</span>
+<span class="prev-text nav-mobile">Prev</span>
+</a>
+<a class=next href=/post/use-memoization-optimization/>
+<span class="next-text nav-default">使用 Memoization 优化代码性能</span>
 <span class="next-text nav-mobile">Next</span>
-<i class="iconfont icon-right"></i></a></nav></footer></article></div><script src=https://utteranc.es/client.js repo=humaoying/humaoying.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script><noscript>Please enable JavaScript to view the <a href=https://github.com/utterance>comments powered by utterances.</a></noscript></div></main><footer id=footer class=footer><div class=social-links><a href=https://github.com/piaoyidage class="iconfont icon-github" title=github></a><a href=https://humaoying.github.io/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a></div><div class=copyright><span class=power-by>Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a></span>
+<i class="iconfont icon-right"></i>
+</a>
+</nav></footer></article></div><script src=https://utteranc.es/client.js repo=humaoying/humaoying.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script>
+<noscript>Please enable JavaScript to view the <a href=https://github.com/utterance>comments powered by utterances.</a></noscript></div></main><footer id=footer class=footer>
+<div class=social-links>
+<a href=https://github.com/piaoyidage class="iconfont icon-github" title=github></a>
+<a href=https://humaoying.github.io/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a>
+</div><div class=copyright>
+<span class=power-by>
+Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
+</span>
 <span class=division>|</span>
-<span class=theme-info>Theme -
-<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a></span>
-<span class=copyright-year>&copy;
-2021<span class=heart><i class="iconfont icon-heart"></i></span><span>Farmer</span></span></div></footer><div class=back-to-top id=back-to-top><i class="iconfont icon-up"></i></div></div><script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script><script type=text/javascript src=/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js></script></body></html>
+<span class=theme-info>
+Theme -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a>
+</span>
+<span class=copyright-year>
+&copy;
+2021 -
+2022<span class=heart><i class="iconfont icon-heart"></i></span><span>F.I.R.E</span>
+</span>
+</div></footer><div class=back-to-top id=back-to-top>
+<i class="iconfont icon-up"></i>
+</div></div><script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/main.min.64437849d125a2d603b3e71d6de5225d641a32d17168a58106e0b61852079683.js></script>
+</body></html>
