@@ -1,125 +1,36 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<title>使用 Memoization 优化代码性能 - F.I.R.E</title><meta name=renderer content="webkit">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=cache-control content="no-transform">
-<meta http-equiv=cache-control content="no-siteapp">
-<meta name=theme-color content="#f8f5ec">
-<meta name=msapplication-navbutton-color content="#f8f5ec">
-<meta name=apple-mobile-web-app-capable content="yes">
-<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
-<meta name=author content="F.I.R.E"><meta name=description content="memoization 来源于拉丁语 memorandum (&amp;ldquo;to be remembered&amp;rdquo;)，不要与 memorization 混淆了。
+<!doctype html><html lang=en><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>使用 Memoization 优化代码性能 - F.I.R.E</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=author content="F.I.R.E"><meta name=description content="memoization 来源于拉丁语 memorandum (&amp;ldquo;to be remembered&amp;rdquo;)，不要与 memorization 混淆了。
 首先来看一下维基百科的描述：
- In computing, memoization or memoisation is an optimization technique used primarily to speed up computer programs by storing the results of expensive function calls and returning the cached result when the same inputs occur again.
-"><meta name=keywords content="blog,F.I.R.E">
-<meta name=generator content="Hugo 0.93.0 with theme even">
-<link rel=canonical href=https://humaoying.github.io/post/use-memoization-optimization/>
-<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
-<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
-<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
-<link rel=manifest href=/manifest.json>
-<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
-<link href=/sass/main.min.f92fd13721ddf72129410fd8250e73152cc6f2438082b6c0208dc24ee7c13fc4.css rel=stylesheet>
-<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
-<meta property="og:title" content="使用 Memoization 优化代码性能">
-<meta property="og:description" content="memoization 来源于拉丁语 memorandum (&ldquo;to be remembered&rdquo;)，不要与 memorization 混淆了。
+In computing, memoization or memoisation is an optimization technique used primarily to speed up computer programs by storing the results of expensive function calls and returning the cached result when the same inputs occur again.
+"><meta name=keywords content="blog,F.I.R.E"><meta name=generator content="Hugo 0.104.3 with theme even"><link rel=canonical href=https://humaoying.github.io/post/use-memoization-optimization/><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link href=/sass/main.min.f92fd13721ddf72129410fd8250e73152cc6f2438082b6c0208dc24ee7c13fc4.css rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous><meta property="og:title" content="使用 Memoization 优化代码性能"><meta property="og:description" content="memoization 来源于拉丁语 memorandum (&ldquo;to be remembered&rdquo;)，不要与 memorization 混淆了。
 首先来看一下维基百科的描述：
 
 In computing, memoization or memoisation is an optimization technique used primarily to speed up computer programs by storing the results of expensive function calls and returning the cached result when the same inputs occur again.
-">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://humaoying.github.io/post/use-memoization-optimization/"><meta property="article:section" content="post">
-<meta property="article:published_time" content="2018-09-17T00:00:00+00:00">
-<meta property="article:modified_time" content="2018-09-17T00:00:00+00:00">
-<meta itemprop=name content="使用 Memoization 优化代码性能">
-<meta itemprop=description content="memoization 来源于拉丁语 memorandum (&ldquo;to be remembered&rdquo;)，不要与 memorization 混淆了。
+"><meta property="og:type" content="article"><meta property="og:url" content="https://humaoying.github.io/post/use-memoization-optimization/"><meta property="article:section" content="post"><meta property="article:published_time" content="2018-09-17T00:00:00+00:00"><meta property="article:modified_time" content="2018-09-17T00:00:00+00:00"><meta itemprop=name content="使用 Memoization 优化代码性能"><meta itemprop=description content="memoization 来源于拉丁语 memorandum (&ldquo;to be remembered&rdquo;)，不要与 memorization 混淆了。
 首先来看一下维基百科的描述：
 
 In computing, memoization or memoisation is an optimization technique used primarily to speed up computer programs by storing the results of expensive function calls and returning the cached result when the same inputs occur again.
-"><meta itemprop=datePublished content="2018-09-17T00:00:00+00:00">
-<meta itemprop=dateModified content="2018-09-17T00:00:00+00:00">
-<meta itemprop=wordCount content="950">
-<meta itemprop=keywords content="JavaScript,"><meta name=twitter:card content="summary">
-<meta name=twitter:title content="使用 Memoization 优化代码性能">
-<meta name=twitter:description content="memoization 来源于拉丁语 memorandum (&ldquo;to be remembered&rdquo;)，不要与 memorization 混淆了。
+"><meta itemprop=datePublished content="2018-09-17T00:00:00+00:00"><meta itemprop=dateModified content="2018-09-17T00:00:00+00:00"><meta itemprop=wordCount content="950"><meta itemprop=keywords content="JavaScript,"><meta name=twitter:card content="summary"><meta name=twitter:title content="使用 Memoization 优化代码性能"><meta name=twitter:description content="memoization 来源于拉丁语 memorandum (&ldquo;to be remembered&rdquo;)，不要与 memorization 混淆了。
 首先来看一下维基百科的描述：
 
 In computing, memoization or memoisation is an optimization technique used primarily to speed up computer programs by storing the results of expensive function calls and returning the cached result when the same inputs occur again.
 "><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
-<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
-</head><body>
-<div id=mobile-navbar class=mobile-navbar>
-<div class=mobile-header-logo>
-<a href=/ class=logo>F.I.R.E</a>
-</div><div class=mobile-navbar-icon>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>F.I.R.E</a></div><div class=mobile-navbar-icon><span></span>
 <span></span>
-<span></span>
-<span></span>
-</div></div><nav id=mobile-menu class="mobile-menu slideout-menu">
-<ul class=mobile-menu-list>
-<a href=/>
-<li class=mobile-menu-item>Home</li></a><a href=/post/>
-<li class=mobile-menu-item>Archives</li></a><a href=/tags/>
-<li class=mobile-menu-item>Tags</li></a><a href=/categories/>
-<li class=mobile-menu-item>Categories</li></a><a href=/about/>
-<li class=mobile-menu-item>About</li></a>
-</ul></nav><div class=container id=mobile-panel>
-<header id=header class=header>
-<div class=logo-wrapper>
-<a href=/ class=logo>F.I.R.E</a>
-</div><nav class=site-navbar>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a class=menu-item-link href=/>Home</a>
-</li><li class=menu-item>
-<a class=menu-item-link href=/post/>Archives</a>
-</li><li class=menu-item>
-<a class=menu-item-link href=/tags/>Tags</a>
-</li><li class=menu-item>
-<a class=menu-item-link href=/categories/>Categories</a>
-</li><li class=menu-item>
-<a class=menu-item-link href=/about/>About</a>
-</li></ul></nav></header><main id=main class=main>
-<div class=content-wrapper>
-<div id=content class=content>
-<article class=post>
-<header class=post-header>
-<h1 class=post-title>使用 Memoization 优化代码性能</h1><div class=post-meta>
-<span class=post-time> 2018-09-17 </span>
-<div class=post-category>
-<a href=/categories/%E5%89%8D%E7%AB%AF/> 前端 </a>
-</div></div></header><div class=post-toc id=post-toc>
-<h2 class=post-toc-title>Contents</h2><div class="post-toc-content always-active">
-<nav id=TableOfContents>
-<ul>
-<li>
-<ul>
-<li><a href=#阶乘>阶乘</a>
-<ul>
-<li><a href=#不使用-memoization>不使用 memoization</a></li><li><a href=#使用-memoization>使用 memoization</a></li><li><a href=#使用-闭包-和-memoization>使用 闭包 和 memoization</a></li></ul></li><li><a href=#underscore-源码中的-memoization>underscore 源码中的 memoization</a></li><li><a href=#reselect-源码中的-memoization>reselect 源码中的 memoization</a></li><li><a href=#总结>总结</a></li><li><a href=#参考>参考</a></li></ul></li></ul></nav></div></div><div class=post-content>
-<p><strong>memoization 来源于拉丁语 memorandum (&ldquo;to be remembered&rdquo;)，不要与 memorization 混淆了。</strong></p><p>首先来看一下维基百科的描述：</p><blockquote>
-<p>In computing, memoization or memoisation is an optimization technique used primarily to speed up computer programs by storing the results of expensive function calls and returning the cached result when the same inputs occur again.</p></blockquote><p>简单来说，memoization 是一种优化技术，主要用于通过存储昂贵的函数调用的结果来加速计算机程序，并在再次发生相同的输入时返回缓存的结果。</p><p>本文首先介绍一个简单的使用 memoization 优化技术的例子，然后解读 underscore 和 reselect 库中使用 memoization 的源码，加深理解。</p><h2 id=阶乘>阶乘</h2><h3 id=不使用-memoization>不使用 memoization</h3><p>不假思索，我们会立即写下如下的代码：</p><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+<span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><a href=/><li class=mobile-menu-item>Home</li></a><a href=/post/><li class=mobile-menu-item>Archives</li></a><a href=/tags/><li class=mobile-menu-item>Tags</li></a><a href=/categories/><li class=mobile-menu-item>Categories</li></a><a href=/about/><li class=mobile-menu-item>About</li></a></ul></nav><div class=container id=mobile-panel><header id=header class=header><div class=logo-wrapper><a href=/ class=logo>F.I.R.E</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=/>Home</a></li><li class=menu-item><a class=menu-item-link href=/post/>Archives</a></li><li class=menu-item><a class=menu-item-link href=/tags/>Tags</a></li><li class=menu-item><a class=menu-item-link href=/categories/>Categories</a></li><li class=menu-item><a class=menu-item-link href=/about/>About</a></li></ul></nav></header><main id=main class=main><div class=content-wrapper><div id=content class=content><article class=post><header class=post-header><h1 class=post-title>使用 Memoization 优化代码性能</h1><div class=post-meta><span class=post-time>2018-09-17</span><div class=post-category><a href=/categories/%E5%89%8D%E7%AB%AF/>前端</a></div></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>Contents</h2><div class="post-toc-content always-active"><nav id=TableOfContents><ul><li><ul><li><a href=#阶乘>阶乘</a><ul><li><a href=#不使用-memoization>不使用 memoization</a></li><li><a href=#使用-memoization>使用 memoization</a></li><li><a href=#使用-闭包-和-memoization>使用 闭包 和 memoization</a></li></ul></li><li><a href=#underscore-源码中的-memoization>underscore 源码中的 memoization</a></li><li><a href=#reselect-源码中的-memoization>reselect 源码中的 memoization</a></li><li><a href=#总结>总结</a></li><li><a href=#参考>参考</a></li></ul></li></ul></nav></div></div><div class=post-content><p><strong>memoization 来源于拉丁语 memorandum (&ldquo;to be remembered&rdquo;)，不要与 memorization 混淆了。</strong></p><p>首先来看一下维基百科的描述：</p><blockquote><p>In computing, memoization or memoisation is an optimization technique used primarily to speed up computer programs by storing the results of expensive function calls and returning the cached result when the same inputs occur again.</p></blockquote><p>简单来说，memoization 是一种优化技术，主要用于通过存储昂贵的函数调用的结果来加速计算机程序，并在再次发生相同的输入时返回缓存的结果。</p><p>本文首先介绍一个简单的使用 memoization 优化技术的例子，然后解读 underscore 和 reselect 库中使用 memoization 的源码，加深理解。</p><h2 id=阶乘>阶乘</h2><h3 id=不使用-memoization>不使用 memoization</h3><p>不假思索，我们会立即写下如下的代码：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
 </span><span class=lnt>7
-</span></code></pre></td><td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kr>const</span> <span class=nx>factorial</span> <span class=o>=</span> <span class=nx>n</span> <span class=p>=&gt;</span> <span class=p>{</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kr>const</span> <span class=nx>factorial</span> <span class=o>=</span> <span class=nx>n</span> <span class=p>=&gt;</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=nx>n</span> <span class=o>===</span> <span class=mi>1</span><span class=p>)</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=mi>1</span>
 </span></span><span class=line><span class=cl>    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=nx>factorial</span><span class=p>(</span><span class=nx>n</span> <span class=o>-</span> <span class=mi>1</span><span class=p>)</span> <span class=o>*</span> <span class=nx>n</span>
 </span></span><span class=line><span class=cl>    <span class=p>}</span>
 </span></span><span class=line><span class=cl><span class=p>};</span>
-</span></span></code></pre></td></tr></table></div></div><h3 id=使用-memoization>使用 memoization</h3><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></code></pre></td></tr></table></div></div><h3 id=使用-memoization>使用 memoization</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -131,8 +42,7 @@ In computing, memoization or memoisation is an optimization technique used prima
 </span><span class=lnt>10
 </span><span class=lnt>11
 </span><span class=lnt>12
-</span></code></pre></td><td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kr>const</span> <span class=nx>cache</span> <span class=o>=</span> <span class=p>[]</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kr>const</span> <span class=nx>cache</span> <span class=o>=</span> <span class=p>[]</span>
 </span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>factorial</span> <span class=o>=</span> <span class=nx>n</span> <span class=p>=&gt;</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=nx>n</span> <span class=o>===</span> <span class=mi>1</span><span class=p>)</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=mi>1</span>
@@ -144,9 +54,7 @@ In computing, memoization or memoisation is an optimization technique used prima
 </span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=nx>result</span>
 </span></span><span class=line><span class=cl>    <span class=p>}</span>
 </span></span><span class=line><span class=cl><span class=p>};</span>
-</span></span></code></pre></td></tr></table></div></div><h3 id=使用-闭包-和-memoization>使用 闭包 和 memoization</h3><p>常见的方式是 闭包 和 memoization 一起搭配使用：</p><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></code></pre></td></tr></table></div></div><h3 id=使用-闭包-和-memoization>使用 闭包 和 memoization</h3><p>常见的方式是 闭包 和 memoization 一起搭配使用：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -163,8 +71,7 @@ In computing, memoization or memoisation is an optimization technique used prima
 </span><span class=lnt>15
 </span><span class=lnt>16
 </span><span class=lnt>17
-</span></code></pre></td><td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kr>const</span> <span class=nx>factorialMemo</span> <span class=o>=</span> <span class=p>()</span> <span class=p>=&gt;</span> <span class=p>{</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kr>const</span> <span class=nx>factorialMemo</span> <span class=o>=</span> <span class=p>()</span> <span class=p>=&gt;</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=kr>const</span> <span class=nx>cache</span> <span class=o>=</span> <span class=p>[]</span>
 </span></span><span class=line><span class=cl>    <span class=kr>const</span> <span class=nx>factorial</span> <span class=o>=</span> <span class=nx>n</span> <span class=p>=&gt;</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=nx>n</span> <span class=o>===</span> <span class=mi>1</span><span class=p>)</span> <span class=p>{</span>
@@ -181,9 +88,7 @@ In computing, memoization or memoisation is an optimization technique used prima
 </span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>factorial</span>
 </span></span><span class=line><span class=cl><span class=p>};</span>
 </span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>factorial</span> <span class=o>=</span> <span class=nx>factorialMemo</span><span class=p>();</span>
-</span></span></code></pre></td></tr></table></div></div><p><strong>继续变形,下面这种编写方式是最常见的形式。</strong></p><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></code></pre></td></tr></table></div></div><p><strong>继续变形,下面这种编写方式是最常见的形式。</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -200,8 +105,7 @@ In computing, memoization or memoisation is an optimization technique used prima
 </span><span class=lnt>15
 </span><span class=lnt>16
 </span><span class=lnt>17
-</span></code></pre></td><td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kr>const</span> <span class=nx>factorialMemo</span> <span class=o>=</span> <span class=nx>func</span> <span class=p>=&gt;</span> <span class=p>{</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kr>const</span> <span class=nx>factorialMemo</span> <span class=o>=</span> <span class=nx>func</span> <span class=p>=&gt;</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=kr>const</span> <span class=nx>cache</span> <span class=o>=</span> <span class=p>[]</span>
 </span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=kd>function</span><span class=p>(</span><span class=nx>n</span><span class=p>)</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=nx>cache</span><span class=p>[</span><span class=nx>n</span> <span class=o>-</span> <span class=mi>1</span><span class=p>])</span> <span class=p>{</span>
@@ -218,9 +122,7 @@ In computing, memoization or memoisation is an optimization technique used prima
 </span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>factorial</span> <span class=o>=</span> <span class=nx>factorialMemo</span><span class=p>(</span><span class=kd>function</span><span class=p>(</span><span class=nx>n</span><span class=p>)</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>n</span> <span class=o>===</span> <span class=mi>1</span> <span class=o>?</span> <span class=mi>1</span> <span class=o>:</span> <span class=nx>factorial</span><span class=p>(</span><span class=nx>n</span> <span class=o>-</span> <span class=mi>1</span><span class=p>)</span> <span class=o>*</span> <span class=nx>n</span>
 </span></span><span class=line><span class=cl><span class=p>});</span>
-</span></span></code></pre></td></tr></table></div></div><p>从阶乘的这个例子可以知道 memoization 是一个空间换时间的方式，存储执行结果，下次再次发生相同的输入会直接输出结果，提高了执行的速度。</p><h2 id=underscore-源码中的-memoization>underscore 源码中的 memoization</h2><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></code></pre></td></tr></table></div></div><p>从阶乘的这个例子可以知道 memoization 是一个空间换时间的方式，存储执行结果，下次再次发生相同的输入会直接输出结果，提高了执行的速度。</p><h2 id=underscore-源码中的-memoization>underscore 源码中的 memoization</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -231,8 +133,7 @@ In computing, memoization or memoisation is an optimization technique used prima
 </span><span class=lnt> 9
 </span><span class=lnt>10
 </span><span class=lnt>11
-</span></code></pre></td><td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=c1>// Memoize an expensive function by storing its results.
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=c1>// Memoize an expensive function by storing its results.
 </span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>_</span><span class=p>.</span><span class=nx>memoize</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>func</span><span class=p>,</span> <span class=nx>hasher</span><span class=p>)</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=kd>var</span> <span class=nx>memoize</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>key</span><span class=p>)</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>        <span class=kd>var</span> <span class=nx>cache</span> <span class=o>=</span> <span class=nx>memoize</span><span class=p>.</span><span class=nx>cache</span><span class=p>;</span>
@@ -243,18 +144,13 @@ In computing, memoization or memoisation is an optimization technique used prima
 </span></span><span class=line><span class=cl>    <span class=nx>memoize</span><span class=p>.</span><span class=nx>cache</span> <span class=o>=</span> <span class=p>{};</span>
 </span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>memoize</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=p>};</span>
-</span></span></code></pre></td></tr></table></div></div><p>代码一目了然，使用 _.memoize 来实现阶乘如下：</p><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></span></code></pre></td></tr></table></div></div><p>代码一目了然，使用 _.memoize 来实现阶乘如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
-</span></code></pre></td><td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kr>const</span> <span class=nx>factorial</span> <span class=o>=</span> <span class=nx>_</span><span class=p>.</span><span class=nx>memoize</span><span class=p>(</span><span class=kd>function</span><span class=p>(</span><span class=nx>n</span><span class=p>)</span> <span class=p>{</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kr>const</span> <span class=nx>factorial</span> <span class=o>=</span> <span class=nx>_</span><span class=p>.</span><span class=nx>memoize</span><span class=p>(</span><span class=kd>function</span><span class=p>(</span><span class=nx>n</span><span class=p>)</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>n</span> <span class=o>===</span> <span class=mi>1</span> <span class=o>?</span> <span class=mi>1</span> <span class=o>:</span> <span class=nx>factorial</span><span class=p>(</span><span class=nx>n</span> <span class=o>-</span> <span class=mi>1</span><span class=p>)</span> <span class=o>*</span> <span class=nx>n</span>
 </span></span><span class=line><span class=cl><span class=p>});</span>
-</span></span></code></pre></td></tr></table></div></div><p>参照这个源码，上面的阶乘继续可以变形如下：</p><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></code></pre></td></tr></table></div></div><p>参照这个源码，上面的阶乘继续可以变形如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -273,8 +169,7 @@ In computing, memoization or memoisation is an optimization technique used prima
 </span><span class=lnt>17
 </span><span class=lnt>18
 </span><span class=lnt>19
-</span></code></pre></td><td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kr>const</span> <span class=nx>factorialMemo</span> <span class=o>=</span> <span class=nx>func</span> <span class=p>=&gt;</span> <span class=p>{</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kr>const</span> <span class=nx>factorialMemo</span> <span class=o>=</span> <span class=nx>func</span> <span class=p>=&gt;</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=kr>const</span> <span class=nx>memoize</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>n</span><span class=p>)</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>        <span class=kr>const</span> <span class=nx>cache</span> <span class=o>=</span> <span class=nx>memoize</span><span class=p>.</span><span class=nx>cache</span>
 </span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=nx>cache</span><span class=p>[</span><span class=nx>n</span> <span class=o>-</span> <span class=mi>1</span><span class=p>])</span> <span class=p>{</span>
@@ -293,9 +188,7 @@ In computing, memoization or memoisation is an optimization technique used prima
 </span></span><span class=line><span class=cl><span class=kr>const</span> <span class=nx>factorial</span> <span class=o>=</span> <span class=nx>factorialMemo</span><span class=p>(</span><span class=kd>function</span><span class=p>(</span><span class=nx>n</span><span class=p>)</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>n</span> <span class=o>===</span> <span class=mi>1</span> <span class=o>?</span> <span class=mi>1</span> <span class=o>:</span> <span class=nx>factorial</span><span class=p>(</span><span class=nx>n</span> <span class=o>-</span> <span class=mi>1</span><span class=p>)</span> <span class=o>*</span> <span class=nx>n</span>
 </span></span><span class=line><span class=cl><span class=p>});</span>
-</span></span></code></pre></td></tr></table></div></div><h2 id=reselect-源码中的-memoization>reselect 源码中的 memoization</h2><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></code></pre></td></tr></table></div></div><h2 id=reselect-源码中的-memoization>reselect 源码中的 memoization</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -309,8 +202,7 @@ In computing, memoization or memoisation is an optimization technique used prima
 </span><span class=lnt>12
 </span><span class=lnt>13
 </span><span class=lnt>14
-</span></code></pre></td><td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kr>export</span> <span class=kd>function</span> <span class=nx>defaultMemoize</span><span class=p>(</span><span class=nx>func</span><span class=p>,</span> <span class=nx>equalityCheck</span> <span class=o>=</span> <span class=nx>defaultEqualityCheck</span><span class=p>)</span> <span class=p>{</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=line><span class=cl><span class=kr>export</span> <span class=kd>function</span> <span class=nx>defaultMemoize</span><span class=p>(</span><span class=nx>func</span><span class=p>,</span> <span class=nx>equalityCheck</span> <span class=o>=</span> <span class=nx>defaultEqualityCheck</span><span class=p>)</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=kd>let</span> <span class=nx>lastArgs</span> <span class=o>=</span> <span class=kc>null</span>
 </span></span><span class=line><span class=cl>    <span class=kd>let</span> <span class=nx>lastResult</span> <span class=o>=</span> <span class=kc>null</span>
 </span></span><span class=line><span class=cl>    <span class=c1>// we reference arguments instead of spreading them for performance reasons
@@ -324,39 +216,16 @@ In computing, memoization or memoisation is an optimization technique used prima
 </span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=nx>lastResult</span>
 </span></span><span class=line><span class=cl>    <span class=p>}</span>
 </span></span><span class=line><span class=cl><span class=p>};</span>
-</span></span></code></pre></td></tr></table></div></div><p>从源码可以知道当 lastArgs 与 arguments 相同的时候，就不会再执行 func。</p><h2 id=总结>总结</h2><p>memoization 是一种优化技术，避免一些不必要的重复计算，可以提高计算速度。</p><h2 id=参考>参考</h2><ol>
-<li><a href=https://en.wikipedia.org/wiki/Memoization>Memoization wiki</a></li><li><a href=https://codeburst.io/understanding-memoization-in-3-minutes-2e58daf33a19>Understanding JavaScript Memoization In 3 Minutes</a></li><li><a href=https://github.com/jashkenas/underscore>Underscore</a></li><li><a href=https://github.com/reduxjs/reselect>reselect</a></li><li><a href=https://www.sitepoint.com/implementing-memoization-in-javascript/>Implementing Memoization in JavaScript</a></li></ol></div><footer class=post-footer>
-<div class=post-tags>
-<a href=/tags/javascript/>JavaScript</a>
-</div><nav class=post-nav>
-<a class=prev href=/post/use-closure-deeply/>
-<i class="iconfont icon-left"></i>
+</span></span></code></pre></td></tr></table></div></div><p>从源码可以知道当 lastArgs 与 arguments 相同的时候，就不会再执行 func。</p><h2 id=总结>总结</h2><p>memoization 是一种优化技术，避免一些不必要的重复计算，可以提高计算速度。</p><h2 id=参考>参考</h2><ol><li><a href=https://en.wikipedia.org/wiki/Memoization>Memoization wiki</a></li><li><a href=https://codeburst.io/understanding-memoization-in-3-minutes-2e58daf33a19>Understanding JavaScript Memoization In 3 Minutes</a></li><li><a href=https://github.com/jashkenas/underscore>Underscore</a></li><li><a href=https://github.com/reduxjs/reselect>reselect</a></li><li><a href=https://www.sitepoint.com/implementing-memoization-in-javascript/>Implementing Memoization in JavaScript</a></li></ol></div><footer class=post-footer><div class=post-tags><a href=/tags/javascript/>JavaScript</a></div><nav class=post-nav><a class=prev href=/post/use-closure-deeply/><i class="iconfont icon-left"></i>
 <span class="prev-text nav-default">闭包在 curry/compose/memo 中的使用</span>
-<span class="prev-text nav-mobile">Prev</span>
-</a>
-</nav></footer></article></div><script src=https://utteranc.es/client.js repo=humaoying/humaoying.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script>
-<noscript>Please enable JavaScript to view the <a href=https://github.com/utterance>comments powered by utterances.</a></noscript></div></main><footer id=footer class=footer>
-<div class=social-links>
-<a href=https://github.com/piaoyidage class="iconfont icon-github" title=github></a>
-<a href=https://humaoying.github.io/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a>
-</div><div class=copyright>
-<span class=power-by>
-Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
-</span>
+<span class="prev-text nav-mobile">Prev</span></a></nav></footer></article></div><script src=https://utteranc.es/client.js repo=humaoying/humaoying.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script><noscript>Please enable JavaScript to view the <a href=https://github.com/utterance>comments powered by utterances.</a></noscript></div></main><footer id=footer class=footer><div class=social-links><a href=https://github.com/piaoyidage class="iconfont icon-github" title=github></a>
+<a href=https://humaoying.github.io/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a></div><div class=copyright><span class=power-by>Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a></span>
 <span class=division>|</span>
-<span class=theme-info>
-Theme -
-<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a>
-</span>
-<span class=copyright-year>
-&copy;
+<span class=theme-info>Theme -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a></span>
+<span class=copyright-year>&copy;
 2021 -
-2022<span class=heart><i class="iconfont icon-heart"></i></span><span>F.I.R.E</span>
-</span>
-</div></footer><div class=back-to-top id=back-to-top>
-<i class="iconfont icon-up"></i>
-</div></div><script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+2022<span class=heart><i class="iconfont icon-heart"></i></span><span>F.I.R.E</span></span></div></footer><div class=back-to-top id=back-to-top><i class="iconfont icon-up"></i></div></div><script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
 <script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
 <script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
-<script type=text/javascript src=/js/main.min.64437849d125a2d603b3e71d6de5225d641a32d17168a58106e0b61852079683.js></script>
-</body></html>
+<script type=text/javascript src=/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js></script></body></html>
