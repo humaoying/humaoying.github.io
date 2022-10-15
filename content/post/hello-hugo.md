@@ -6,7 +6,6 @@ draft: false
 tags: [Hugo]
 categories: []
 author: "Farmer"
-draft: true
 ---
 
 **生命在于折腾，之前使用过 Jekyll、Hexo 静态建站，但效果都不尽如人意，现在尝试使用 Hugo，开启一段新的旅程。**
@@ -38,7 +37,9 @@ git init
 git submodule add https://github.com/olOwOlo/hugo-theme-even themes/even
 ```
 
-将 theme/even/exampleSite/config.toml 内容拷贝到 config.toml，然后根据个人需求，配置 config.toml。
+将 **theme/even/exampleSite/config.toml** 内容拷贝到 **config.toml**，然后根据个人需求，配置 **config.toml**。
+
+更多使用说明参考 [hugo-theme-even](https://github.com/olOwOlo/hugo-theme-even)
 
 ## 新建一篇文章
 
