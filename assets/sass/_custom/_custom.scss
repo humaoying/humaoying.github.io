@@ -1,0 +1,25 @@
+// ==============================
+// Custom style
+// ==============================
+// You can override the variables in _variables.scss to customize the style
+@font-face {
+  font-family: 'LXGW';
+  src: url('../fonts/LXGWWenKai-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'LXGW Mono';
+  src: url('../fonts/LXGWWenKaiMono-Regular.ttf');
+}
+
+$global-font-family: 'LXGW', 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif !default;
+
+// Font family of the logo.
+$logo-font-family: 'Chancery', cursive, LiSu, sans-serif !default;
+
+// Font family of the code.
+$code-font-family: 'LXGW Mono', Consolas, Monaco, Menlo, "DejaVu Sans Mono",
+ "Bitstream Vera Sans Mono", "Courier New", monospace !default;
+
+ // Serif font family of the site.
+$global-serif-font-family: 'LXGW', Athelas, STHeiti, Microsoft Yahei, serif !default;
