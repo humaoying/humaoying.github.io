@@ -4,12 +4,12 @@
 // You can override the variables in _variables.scss to customize the style
 @font-face {
   font-family: 'LXGW';
-  src: url('../fonts/LXGWWenKai-Regular.ttf');
+  src: url('../fonts/LXGWWenKai-Regular.woff2');
 }
 
 @font-face {
   font-family: 'LXGW Mono';
-  src: url('../fonts/LXGWWenKaiMono-Regular.ttf');
+  src: url('../fonts/LXGWWenKaiMono-Regular.woff2');
 }
 
 $global-font-family: 'LXGW', 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif !default;
