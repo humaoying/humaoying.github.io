@@ -1,10 +1,9 @@
 ---
 title: "Hugo 建站记录"
 date: 2021-02-24
-lastmod: 2021-02-25
 draft: false
 tags: [Hugo]
-categories: []
+categories: [其他]
 author: "Farmer"
 ---
 
@@ -114,6 +113,48 @@ jobs:
 ## 集成评论
 
 选择 utterances，参考[Hugo 博客使用 utterances 作为评论系统](https://www.midfang.com/hugo-utterances-comment-system/)
+
+## 自定义字体
+
+上面介绍了如何去应用一个主题，那么如何去自定义字体呢？
+
+比如，我的博客使用 [霞鹜文楷](https://github.com/lxgw/LxgwWenKai) 字体，思路如下：
+
+1. 下载需要的字体，放到 `static/fnots` 文件夹 下面
+2. 然后在 `assets/sass/_custom` 文件夹下面新建一个 `_custom.scss`，去覆写样式。
+
+**需要注意：不同的主题需要覆写的样式不同，这里只是提供一个思路参考。**
+
+_custom.scss 的内容参考如下：
+
+```scss
+// ==============================
+// Custom style
+// ==============================
+// You can override the variables in _variables.scss to customize the style
+@font-face {
+  font-family: 'LXGW';
+  src: url('../fonts/LXGWWenKai-Regular.woff2');
+}
+
+@font-face {
+  font-family: 'LXGW Mono';
+  src: url('../fonts/LXGWWenKaiMono-Regular.woff2');
+}
+
+$global-font-family: 'LXGW', 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif !default;
+
+// Font family of the logo.
+$logo-font-family: 'Chancery', cursive, LiSu, sans-serif !default;
+
+// Font family of the code.
+$code-font-family: 'LXGW Mono', Consolas, Monaco, Menlo, "DejaVu Sans Mono",
+ "Bitstream Vera Sans Mono", "Courier New", monospace !default;
+
+ // Serif font family of the site.
+$global-serif-font-family: 'LXGW', Athelas, STHeiti, Microsoft Yahei, serif !default;
+```
+
 
 
 # 参考
