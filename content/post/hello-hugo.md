@@ -40,6 +40,13 @@ git submodule add https://github.com/olOwOlo/hugo-theme-even themes/even
 
 更多使用说明参考 [hugo-theme-even](https://github.com/olOwOlo/hugo-theme-even)
 
+**注意，使用 `git submodule` 拉取和更新执行如下命令：**
+
+```bash
+git submodule init
+git submodule update
+```
+
 ## 新建一篇文章
 
 ```bash
@@ -154,8 +161,6 @@ $code-font-family: 'LXGW Mono', Consolas, Monaco, Menlo, "DejaVu Sans Mono",
  // Serif font family of the site.
 $global-serif-font-family: 'LXGW', Athelas, STHeiti, Microsoft Yahei, serif !default;
 ```
-
-
 
 # 参考
 
